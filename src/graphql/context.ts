@@ -1,12 +1,15 @@
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { Database } from "../database";
+import { Request } from "express";
 
 class Context {
     public userId?: string;
     public isAuthenticated?: boolean;
+    public req: Request;
 
     constructor(public database: Database, expressContext: ExpressContext) {
-        const user = (expressContext.req as any).user as Creds;
+        this.req = expressContext.req;
+        const user = this.req.user as Creds;
 
         if (user) {
             this.userId = user.userId;
