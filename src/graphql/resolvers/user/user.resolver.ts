@@ -33,9 +33,17 @@ export default class UserResolver {
      * User's inbox
      */
     @FieldResolver()
-    async inbox(@Root() user: User, @Ctx() { database, userId }: Context): Promise<User["inbox"]> {
+    async inbox(
+        @Root() user: User, 
+        @Ctx() { database, userId }: Context,
+        @Arg("page", { defaultValue: 1 }) page: number,
+        @Arg("perPage", { defaultValue: 10 }) perPage: number,
+    ): Promise<User["inbox"]> {
         // lookup the messages for a user from messages table
-        const messages = await database.MessageModel.find({ to: userId });
+        const skip = perPage * (page - 1);
+        const messages = await database.MessageModel.find({ to: userId, archived: false })
+            .skip(skip)
+            .limit(perPage);
 
         return messages.map(message => ({
             id: message.id,
@@ -55,7 +63,7 @@ export default class UserResolver {
         @Ctx() { database, userId }: Context,
     ): Promise<User["unreadMessageCount"]> {
         // do a count on the DB for messages count
-        const count = await database.MessageModel.find({ to: userId });
+        const count = await database.MessageModel.find({ to: userId, archived: false });
         return count.length;
     }
 

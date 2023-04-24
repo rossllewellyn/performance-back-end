@@ -1,7 +1,7 @@
 import { prop, getModelForClass, index, Ref } from '@typegoose/typegoose';
 import { Message } from "./message";
 
-@index({ email: 1 })
+@index({ email: 1 }, { unique: true })
 @index({ password: 1 })
 export class User {
     @prop()
