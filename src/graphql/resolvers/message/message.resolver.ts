@@ -18,18 +18,19 @@ export default class MessageResolver {
             return null;
         }
 
-        const user = await database.UserModel.findById(to.id);
+        try {
+            const user = await database.UserModel.findById(to);
 
-        if (!user) {
-            return null;
+            return user
+                ? {
+                    id: user.id,
+                    name: user.name,
+                    unreadMessageCount: undefined,
+                    inbox: undefined,
+                } : null;
+        } catch (error) {
+            throw new ApolloError("User not found", "404");
         }
-
-        return {
-            id: user.id,
-            name: user.name,
-            unreadMessageCount: undefined,
-            inbox: undefined,
-        };
     }
 
     /**
@@ -41,20 +42,20 @@ export default class MessageResolver {
             return null;
         }
 
-        const user = await database.UserModel.findById(from.id);
+        try {
+            const user = await database.UserModel.findById(from);
+            if (user) console.log(`User found!`, user);
 
-        console.log(`User found!`, user);
-
-        if (!user) {
-            return null;
-        }
-
-        return {
-            id: user.id,
-            name: user.name,
-            unreadMessageCount: undefined,
-            inbox: undefined,
-        };
+            return user 
+                ? {
+                    id: user.id,
+                    name: user.name,
+                    unreadMessageCount: undefined,
+                    inbox: undefined,
+                } : null;
+            } catch (error) {
+                throw new ApolloError("User not found", "404");
+            }
     }
 
     /**
