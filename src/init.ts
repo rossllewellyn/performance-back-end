@@ -30,7 +30,7 @@ const init = async () => {
             algorithms: ["HS256"],
         }),
         // doesn't play nice with artillery!
-        limiter
+        // limiter
     );
 
     // for debugging
