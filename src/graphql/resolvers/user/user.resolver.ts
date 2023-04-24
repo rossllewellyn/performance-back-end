@@ -70,7 +70,7 @@ export default class UserResolver {
             throw new ApolloError(`Invalid credentials`, "401");
         }
 
-        return jwt.sign({ userId: record._id }, config.auth.secret, { expiresIn: "1y" });
+        return jwt.sign({ userId: record._id }, config.auth.secret, { expiresIn: "1h" });
     }
 
     /**
@@ -93,6 +93,6 @@ export default class UserResolver {
             password: hash,
         });
 
-        return jwt.sign({ userId: user._id }, config.auth.secret, { expiresIn: "1y" });
+        return jwt.sign({ userId: user._id }, config.auth.secret, { expiresIn: "1h" });
     }
 }
