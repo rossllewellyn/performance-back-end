@@ -14,6 +14,9 @@ class Message {
 
     @Field()
     to?: User;
+
+    @Field()
+    archived!: boolean;
 }
 
 export default Message;

@@ -18,7 +18,7 @@ export default class UserResolver {
         const user = await database.UserModel.findById(userId);
 
         if (!user) {
-            throw new ApolloError(`User does not exist`, "404");
+            throw new ApolloError("User does not exist", "404");
         }
 
         return {
@@ -42,6 +42,7 @@ export default class UserResolver {
             contents: message.contents,
             to: message.to as any,
             from: message.from as any,
+            archived: message.archived
         }));
     }
 
@@ -67,7 +68,7 @@ export default class UserResolver {
         const correct = await bcrypt.compare(password, record.password);
 
         if (!correct) {
-            throw new ApolloError(`Invalid credentials`, "401");
+            throw new ApolloError("Invalid credentials", "401");
         }
 
         return jwt.sign({ userId: record._id }, config.auth.secret, { expiresIn: "1h" });
@@ -83,7 +84,7 @@ export default class UserResolver {
         // small privacy issue, non-owner of email address
         // can determine if owner is signed up to the site/app
         if (existing) {
-            throw new ApolloError(`User exists!`, "409");
+            throw new ApolloError("User exists!", "409");
         }
 
         const salt = await bcrypt.genSalt(10);

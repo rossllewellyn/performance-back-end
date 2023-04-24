@@ -10,6 +10,9 @@ export class Message {
 
     @prop()
     public contents!: string;
+
+    @prop()
+    public archived!: boolean;
 }
 
 const MessageModel = getModelForClass(Message);

@@ -4,6 +4,7 @@ import User from "../user/user.type";
 import Context from "../../context";
 import { random } from "../../../utils/math";
 import auth from "../../../middleware/auth";
+import { ApolloError } from "apollo-server-express";
 const randomSentence = require("random-sentence");
 
 @Resolver(Message)
@@ -72,6 +73,7 @@ export default class MessageResolver {
             from: userId,
             to: to?._id,
             contents: message,
+            archived: false
         });
 
         return {
@@ -79,6 +81,27 @@ export default class MessageResolver {
             contents: message,
             to: to?._id,
             from: userId as any,
+            archived: false
         };
+    }
+
+    /**
+     * Mark message as archived
+     */
+    @Mutation(type => Message)
+    @UseMiddleware(auth)
+    async archiveMessage(@Arg("messageId") messageId: string, @Ctx() { database }: Context) {
+        try {
+            const message = await database.MessageModel.findByIdAndUpdate(
+                messageId, 
+                { archived: true }, 
+                { new: true }
+            );
+
+            return message;
+        } catch (error) {
+            throw new ApolloError("Failed to archive message", "500");
+        }
+
     }
 }
