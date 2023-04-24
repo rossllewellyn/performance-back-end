@@ -20,7 +20,7 @@ class Context {
 
 export default Context;
 
-type Creds = {
+export type Creds = {
     userId: string;
     iat: number;
 };

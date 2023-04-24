@@ -1,5 +1,5 @@
 import { MiddlewareFn } from "type-graphql";
-import Context from "../graphql/context";
+import Context, { Creds } from "../graphql/context";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { ApolloError } from "apollo-server-express";
@@ -11,7 +11,8 @@ const auth: MiddlewareFn<Context> = ({ context }, next) => {
   
   try {
     const token = authHeader.split(" ")[1];
-    const decodedToken = jwt.verify(token, config.auth.secret) as any;
+    const decodedToken = jwt.verify(token, config.auth.secret) as DecodedToken;
+    console.log(decodedToken);
     context.userId = decodedToken.userId;
 
     return next();
@@ -21,3 +22,7 @@ const auth: MiddlewareFn<Context> = ({ context }, next) => {
 }
 
 export default auth;
+
+type DecodedToken = Creds & {
+  exp: number;
+}
