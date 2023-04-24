@@ -1,7 +1,11 @@
 FROM node:12.18
 
 # Bundle app source
-ADD . .
+COPY . .
+
+# Install & build
+RUN yarn install
+RUN yarn build
 
 # Expose
 EXPOSE 5000
