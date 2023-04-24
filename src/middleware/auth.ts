@@ -12,7 +12,6 @@ const auth: MiddlewareFn<Context> = ({ context }, next) => {
   try {
     const token = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(token, config.auth.secret) as DecodedToken;
-    console.log(decodedToken);
     context.userId = decodedToken.userId;
 
     return next();
