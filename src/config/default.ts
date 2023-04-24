@@ -1,14 +1,22 @@
 import { Config } from "./types";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+// OK to set in .env as connecting to local (or staging) db
+const databaseUrl = process.env.LOCAL_DATABASE_URL as string;
+const authSecret = process.env.LOCAL_AUTH_SECRET as string;
+const frontendUrl = process.env.LOCAL_FRONTEND_URL as string;
 
 const config: Config = {
     database: {
-        uri: "mongodb://localhost:27017/yulife-performance",
+        uri: databaseUrl
     },
     auth: {
-        secret: "LOCAL_SECRET",
+        secret: authSecret
     },
     frontend: {
-        selfUrl: "http://localhost:5000/app",
+        selfUrl: frontendUrl
     }
 }
 
