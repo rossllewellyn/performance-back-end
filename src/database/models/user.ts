@@ -1,6 +1,8 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { prop, getModelForClass, index, Ref } from '@typegoose/typegoose';
 import { Message } from "./message";
 
+@index({ email: 1 })
+@index({ password: 1 })
 export class User {
     @prop()
     public name?: string;
