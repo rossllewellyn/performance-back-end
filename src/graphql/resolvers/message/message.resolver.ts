@@ -14,12 +14,11 @@ export default class MessageResolver {
      */
     @FieldResolver()
     async to(@Root() { to }: Message, @Ctx() { database }: Context): Promise<User | null> {
-        // TODO: add lookup from DB
         if (!to) {
             return null;
         }
 
-        const user = await database.UserModel.findById(to);
+        const user = await database.UserModel.findById(to.id);
 
         if (!user) {
             return null;
@@ -42,7 +41,7 @@ export default class MessageResolver {
             return null;
         }
 
-        const user = await database.UserModel.findById(from);
+        const user = await database.UserModel.findById(from.id);
 
         console.log(`User found!`, user);
 
