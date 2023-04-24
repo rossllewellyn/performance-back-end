@@ -1,9 +1,11 @@
-import { Resolver, Query, Mutation, Ctx, Arg, FieldResolver, Root } from "type-graphql";
+import { Resolver, Query, Mutation, Ctx, Arg, FieldResolver, Root, UseMiddleware } from "type-graphql";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "./user.type";
 import Context from "../../context";
 import config from "../../../config";
+import auth from "../../../middleware/auth";
+import { ApolloError } from "apollo-server-express";
 
 @Resolver(User)
 export default class UserResolver {
@@ -11,15 +13,12 @@ export default class UserResolver {
      * Me Query
      */
     @Query(returns => User)
+    @UseMiddleware(auth)
     async me(@Ctx() { database, userId }: Context): Promise<User> {
-        if (!userId) {
-            throw new Error(`Not authenticated`);
-        }
-
         const user = await database.UserModel.findById(userId);
 
         if (!user) {
-            throw new Error(`User does not exist`);
+            throw new ApolloError(`User does not exist`, "404");
         }
 
         return {
@@ -65,15 +64,10 @@ export default class UserResolver {
     @Mutation(returns => String)
     async login(@Arg("email") email: string, @Arg("password") password: string, @Ctx() { database }: Context) {
         const record = await database.UserModel.findOne({ email });
-
-        if (!record) {
-            throw new Error(`Incorrect password`);
-        }
-
         const correct = await bcrypt.compare(password, record.password);
 
         if (!correct) {
-            throw new Error(`Invalid credentials`);
+            throw new ApolloError(`Invalid credentials`, "401");
         }
 
         return jwt.sign({ userId: record._id }, config.auth.secret, { expiresIn: "1y" });
@@ -86,8 +80,10 @@ export default class UserResolver {
     async register(@Arg("email") email: string, @Arg("password") password: string, @Ctx() { database }: Context) {
         const existing = await database.UserModel.findOne({ email });
 
+        // small privacy issue, non-owner of email address
+        // can determine if owner is signed up to the site/app
         if (existing) {
-            throw new Error(`User exists!`);
+            throw new ApolloError(`User exists!`, "409");
         }
 
         const salt = await bcrypt.genSalt(10);

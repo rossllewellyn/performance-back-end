@@ -1,8 +1,9 @@
-import { Resolver, Mutation, Ctx, Root, Arg, FieldResolver } from "type-graphql";
+import { Resolver, Mutation, Ctx, Root, Arg, FieldResolver, UseMiddleware } from "type-graphql";
 import Message from "./message.type";
 import User from "../user/user.type";
 import Context from "../../context";
 import { random } from "../../../utils/math";
+import auth from "../../../middleware/auth";
 const randomSentence = require("random-sentence");
 
 @Resolver(Message)
@@ -60,11 +61,8 @@ export default class MessageResolver {
      * Sends a message to a random user
      */
     @Mutation(type => Message)
+    @UseMiddleware(auth)
     async sendRandomMessage(@Ctx() { database, userId }: Context, @Arg("message") message: string): Promise<Message> {
-        if (!userId) {
-            throw new Error(`Not authenticated`);
-        }
-
         const count = await database.UserModel.countDocuments({});
         const to = await database.UserModel.findOne({ _id: { $ne: userId } })
             .skip(random(0, count))
