@@ -1,3 +1,10 @@
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+const databaseUrl = process.env.LOCAL_DATABASE_URL;
+const databaseName = process.env.DATABASE_NAME;
+
 const config = {
   mongodb: {
     url: databaseUrl,
