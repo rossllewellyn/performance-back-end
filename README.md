@@ -1,4 +1,4 @@
-# YuLife Task Back-End Performance
+# Back-End Performance
 
 ## Scenario
 
@@ -42,6 +42,3 @@ Once you have made your optimisations, re-bundle the app for production and run 
 
     - A user should be able to mark any of their messages as read
 
-You should spend no more than a couple of hours on this task. You don't need to commit all recommendations in code, but please create a list of them to discuss and talk through in the paired review session
-
-If you have any questions please don't hesitate to ask
